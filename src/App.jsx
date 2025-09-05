@@ -26,8 +26,8 @@ function App() {
   };
 
   // Função para remover número da lista
-  const removeNumber = (numberToRemove) => {
-    setNumbersList(numbersList.filter((num) => num !== numberToRemove));
+  const removeNumber = (indexToRemove) => {
+    setNumbersList(numbersList.filter((_, index) => index !== indexToRemove));
   };
 
   // Função para verificar números faltantes
@@ -91,7 +91,7 @@ function App() {
             <span
               key={index}
               className="number-item"
-              onClick={() => removeNumber(num)}
+              onClick={() => removeNumber(index)}
               title="Clique para remover"
             >
               {num}
