@@ -20,13 +20,7 @@ function App() {
     // Converter para string com 2 dígitos (ex: 5 vira "05")
     const formattedNum = num.padStart(2, "0");
 
-    // Verificar se já existe na lista
-    if (numbersList.includes(formattedNum)) {
-      alert("Este número já foi adicionado!");
-      return;
-    }
-
-    // Adicionar à lista
+    // Adicionar à lista (permitindo repetidos)
     setNumbersList([...numbersList, formattedNum]);
     setInputNumber("");
   };
@@ -44,8 +38,11 @@ function App() {
       allNumbers.push(i.toString().padStart(2, "0"));
     }
 
+    // Obter números únicos da lista inserida
+    const uniqueNumbers = [...new Set(numbersList)];
+
     // Encontrar números faltantes
-    const missing = allNumbers.filter((num) => !numbersList.includes(num));
+    const missing = allNumbers.filter((num) => !uniqueNumbers.includes(num));
     setMissingNumbers(missing);
     setShowResult(true);
   };
