@@ -6,14 +6,18 @@ function App() {
   const [numbersList, setNumbersList] = useState([]);
   const [missingNumbers, setMissingNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
+  const [isRange0to99, setIsRange0to99] = useState(true);
 
   // Função para adicionar número à lista
   const addNumber = () => {
     const num = inputNumber.trim();
+    const minRange = isRange0to99 ? 0 : 1;
+    const maxRange = isRange0to99 ? 99 : 50;
 
-    // Validar se é um número entre 00 e 99
-    if (num === "" || isNaN(num) || num < 0 || num > 99) {
-      alert("Por favor, digite um número válido entre 00 e 99");
+    // Validar se é um número no intervalo selecionado
+    if (num === "" || isNaN(num) || num < minRange || num > maxRange) {
+      const rangeText = isRange0to99 ? "00 e 99" : "01 e 50";
+      alert(`Por favor, digite um número válido entre ${rangeText}`);
       return;
     }
 
@@ -32,9 +36,12 @@ function App() {
 
   // Função para verificar números faltantes
   const checkMissingNumbers = () => {
-    // Gerar lista completa de 00 a 99
+    // Gerar lista completa baseada no intervalo selecionado
     const allNumbers = [];
-    for (let i = 0; i <= 99; i++) {
+    const minRange = isRange0to99 ? 0 : 1;
+    const maxRange = isRange0to99 ? 99 : 50;
+
+    for (let i = minRange; i <= maxRange; i++) {
       allNumbers.push(i.toString().padStart(2, "0"));
     }
 
@@ -55,6 +62,15 @@ function App() {
     setInputNumber("");
   };
 
+  // Função para alternar intervalo e limpar dados
+  const toggleRange = (is0to99) => {
+    setIsRange0to99(is0to99);
+    setNumbersList([]);
+    setMissingNumbers([]);
+    setShowResult(false);
+    setInputNumber("");
+  };
+
   // Função para lidar com Enter no input
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -67,11 +83,27 @@ function App() {
       <h1 className="title">🔢 Números Faltantes</h1>
 
       <div className="input-section">
+        <div className="range-toggle">
+          <button
+            className={`range-button ${isRange0to99 ? "active" : ""}`}
+            onClick={() => toggleRange(true)}
+          >
+            0-99
+          </button>
+          <button
+            className={`range-button ${!isRange0to99 ? "active" : ""}`}
+            onClick={() => toggleRange(false)}
+          >
+            1-50
+          </button>
+        </div>
         <div className="input-group">
           <input
             type="text"
             className="input"
-            placeholder="Digite um número (00-99)"
+            placeholder={`Digite um número (${
+              isRange0to99 ? "00-99" : "01-50"
+            })`}
             value={inputNumber}
             onChange={(e) => setInputNumber(e.target.value)}
             onKeyPress={handleKeyPress}
@@ -110,10 +142,13 @@ function App() {
 
       {showResult && (
         <div className="result-section">
-          <h3 className="result-title">Números faltantes de 00 a 99:</h3>
+          <h3 className="result-title">
+            Números faltantes de {isRange0to99 ? "00 a 99" : "01 a 50"}:
+          </h3>
           {missingNumbers.length === 0 ? (
             <div className="no-missing">
-              🎉 Todos os números de 00 a 99 foram inseridos!
+              🎉 Todos os números de {isRange0to99 ? "00 a 99" : "01 a 50"}{" "}
+              foram inseridos!
             </div>
           ) : (
             <div className="missing-numbers">
