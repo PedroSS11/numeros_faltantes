@@ -6,17 +6,37 @@ function App() {
   const [numbersList, setNumbersList] = useState([]);
   const [missingNumbers, setMissingNumbers] = useState([]);
   const [showResult, setShowResult] = useState(false);
-  const [isRange0to99, setIsRange0to99] = useState(true);
+  const [rangeMode, setRangeMode] = useState("0-99"); // "0-99", "1-50", "1-31"
 
   // Função para adicionar número à lista
   const addNumber = () => {
     const num = inputNumber.trim();
-    const minRange = isRange0to99 ? 0 : 1;
-    const maxRange = isRange0to99 ? 99 : 50;
+    let minRange, maxRange, rangeText;
+
+    switch (rangeMode) {
+      case "0-99":
+        minRange = 0;
+        maxRange = 99;
+        rangeText = "00 e 99";
+        break;
+      case "1-50":
+        minRange = 1;
+        maxRange = 50;
+        rangeText = "01 e 50";
+        break;
+      case "1-31":
+        minRange = 1;
+        maxRange = 31;
+        rangeText = "01 e 31";
+        break;
+      default:
+        minRange = 0;
+        maxRange = 99;
+        rangeText = "00 e 99";
+    }
 
     // Validar se é um número no intervalo selecionado
     if (num === "" || isNaN(num) || num < minRange || num > maxRange) {
-      const rangeText = isRange0to99 ? "00 e 99" : "01 e 50";
       alert(`Por favor, digite um número válido entre ${rangeText}`);
       return;
     }
@@ -38,8 +58,25 @@ function App() {
   const checkMissingNumbers = () => {
     // Gerar lista completa baseada no intervalo selecionado
     const allNumbers = [];
-    const minRange = isRange0to99 ? 0 : 1;
-    const maxRange = isRange0to99 ? 99 : 50;
+    let minRange, maxRange;
+
+    switch (rangeMode) {
+      case "0-99":
+        minRange = 0;
+        maxRange = 99;
+        break;
+      case "1-50":
+        minRange = 1;
+        maxRange = 50;
+        break;
+      case "1-31":
+        minRange = 1;
+        maxRange = 31;
+        break;
+      default:
+        minRange = 0;
+        maxRange = 99;
+    }
 
     for (let i = minRange; i <= maxRange; i++) {
       allNumbers.push(i.toString().padStart(2, "0"));
@@ -63,8 +100,8 @@ function App() {
   };
 
   // Função para alternar intervalo e limpar dados
-  const toggleRange = (is0to99) => {
-    setIsRange0to99(is0to99);
+  const toggleRange = (mode) => {
+    setRangeMode(mode);
     setNumbersList([]);
     setMissingNumbers([]);
     setShowResult(false);
@@ -85,16 +122,22 @@ function App() {
       <div className="input-section">
         <div className="range-toggle">
           <button
-            className={`range-button ${isRange0to99 ? "active" : ""}`}
-            onClick={() => toggleRange(true)}
+            className={`range-button ${rangeMode === "0-99" ? "active" : ""}`}
+            onClick={() => toggleRange("0-99")}
           >
             0-99
           </button>
           <button
-            className={`range-button ${!isRange0to99 ? "active" : ""}`}
-            onClick={() => toggleRange(false)}
+            className={`range-button ${rangeMode === "1-50" ? "active" : ""}`}
+            onClick={() => toggleRange("1-50")}
           >
             1-50
+          </button>
+          <button
+            className={`range-button ${rangeMode === "1-31" ? "active" : ""}`}
+            onClick={() => toggleRange("1-31")}
+          >
+            1-31
           </button>
         </div>
         <div className="input-group">
@@ -102,7 +145,11 @@ function App() {
             type="text"
             className="input"
             placeholder={`Digite um número (${
-              isRange0to99 ? "00-99" : "01-50"
+              rangeMode === "0-99"
+                ? "00-99"
+                : rangeMode === "1-50"
+                ? "01-50"
+                : "01-31"
             })`}
             value={inputNumber}
             onChange={(e) => setInputNumber(e.target.value)}
@@ -143,11 +190,22 @@ function App() {
       {showResult && (
         <div className="result-section">
           <h3 className="result-title">
-            Números faltantes de {isRange0to99 ? "00 a 99" : "01 a 50"}:
+            Números faltantes de{" "}
+            {rangeMode === "0-99"
+              ? "00 a 99"
+              : rangeMode === "1-50"
+              ? "01 a 50"
+              : "01 a 31"}
+            :
           </h3>
           {missingNumbers.length === 0 ? (
             <div className="no-missing">
-              🎉 Todos os números de {isRange0to99 ? "00 a 99" : "01 a 50"}{" "}
+              🎉 Todos os números de{" "}
+              {rangeMode === "0-99"
+                ? "00 a 99"
+                : rangeMode === "1-50"
+                ? "01 a 50"
+                : "01 a 31"}{" "}
               foram inseridos!
             </div>
           ) : (
